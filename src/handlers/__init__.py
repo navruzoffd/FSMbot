@@ -4,6 +4,8 @@ from src.states.base import (
     CreateAlertState
 )
 from src.handlers.base_handlers import (
+    delete_alert,
+    get_alerts,
     set_5m_volume_change,
     set_age,
     set_ignore_social_networks,
@@ -30,6 +32,8 @@ from src.handlers.state import (
 def register_handlers(router: Router) -> None:
     router.message.register(start, CommandStart())
     router.callback_query.register(start, lambda c: c.data =="start")
+    router.callback_query.register(get_alerts, lambda c: c.data == "view")
+    router.callback_query.register(delete_alert, lambda c: c.data.startswith("delete_"))
 
     
     router.callback_query.register(create_alert, lambda c: c.data == "create")

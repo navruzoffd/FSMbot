@@ -7,8 +7,6 @@ def start_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Create", callback_data="create"),
          InlineKeyboardButton(text="View", callback_data="view")],
-         [InlineKeyboardButton(text="Delete", callback_data="delete"),
-          InlineKeyboardButton(text="Back", callback_data="start")]
     ])
     return keyboard
 
@@ -26,9 +24,8 @@ def filters_keyboard():
     ])
     return keyboard
 
-def back_keyboard():
+def delete_keyboard(oid: str):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Back", callback_data="start")]
-    ]
-    )
+        [InlineKeyboardButton(text="Delete", callback_data=f"delete_{oid}")],
+    ])
     return keyboard
