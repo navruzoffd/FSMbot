@@ -1,33 +1,89 @@
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from src.keyboards.base import start_keyboard
 from aiogram.fsm.context import FSMContext
 from aiohttp import ClientSession
 from config import settings
 from src.states.base import (
-    CreateChatState,
+    CreateAlertState,
     MessageState
 )
 
+async def start(message: Message, state: FSMContext) -> None:
+    await state.clear()
+    await message.answer("Alert menu:", reply_markup=start_keyboard())
 
-async def start(message: Message) -> None:
-    await message.answer("Выберите опцию:", reply_markup=start_keyboard())
+async def create_alert(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer("Enter name:")
+    await state.set_state(CreateAlertState.title)
 
-async def create_chat(message: Message, state: FSMContext):
-    await message.answer("Введите название чата:")
-    await state.set_state(CreateChatState.title)
+async def set_age(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer("Enter range for age in hours. Default: 24-72")
+    await state.set_state(CreateAlertState.age_range)
 
-async def add_message(message: Message, state: FSMContext):
-    await message.answer("Введите сообщение:")
-    await state.set_state(MessageState.text)
+async def set_marketcap(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer("Enter range for marketcap in dollars.\nDefault: 50000-100000")
+    await state.set_state(CreateAlertState.marketcap_range)
 
-async def get_messages(message: Message, state: FSMContext):
-    url = settings.DOMAIN + f"chats/{message.from_user.id}"
+async def set_ignore_social_networks(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer('Type "yes" or "no"')
+    await state.set_state(CreateAlertState.ignore_social_networks)
+
+async def set_5m_volume_change(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer("Enter volume cange %% in 5 minutes. Example: 10")
+    await state.set_state(CreateAlertState.m5_volume_change)
+
+async def set_tx1d(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer("Enter min tx count in 1 day. Example: 1500")
+    await state.set_state(CreateAlertState.tx1d)
+
+async def set_tx1h(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer("Enter min tx count in 1 hour. Example: 1500")
+    await state.set_state(CreateAlertState.tx1h)
+
+async def set_tx5m(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer("Enter min tx count in 5 min. Example: 150")
+    await state.set_state(CreateAlertState.tx5m)
+
+async def submit_alert_request(callback: CallbackQuery, state: FSMContext):
+    await callback.message.answer("In process...")
+
+    url = settings.DOMAIN + "/alert/"
+    data = await state.get_data()
+    request_data = {
+        "name": data["title"],
+        "chat_id": str(callback.message.from_user.id),
+        "filters": {
+            "age": data.get("age_range", "86400 259200").split(),
+            "market_cap": data.get("marketcap_range", "50000 100000").split(),
+            "ignore_social_networks": data.get("ignore_social_networks"),
+            "m5_volume_change": data.get("m5_volume_change"),
+            "tx1d": data.get("tx1d"),
+            "tx1h": data.get("tx1h"),
+            "tx5m": data.get("tx5m")
+        }
+    }
     async with ClientSession() as session:
-        async with session.get(url) as response:
-            if response.status == 200:
-                data = response.json()
-                for message in data:
-                    pass
-                    ##TODO Развернуть бэк, посмотреть структуру ответов
+        async with session.post(url=url, json = request_data) as response:
+            response_data = await response.json()
+            if response.status == 201:
+                await callback.message.answer("Success✅")
             else:
-                await message.answer(f"Ошибка {response.status}")
+                await callback.message.answer(str(response_data))
+            
+
+
+# async def add_message(message: Message, state: FSMContext):
+#     await message.answer("Введите сообщение:")
+#     await state.set_state(MessageState.text)
+
+# async def get_messages(message: Message, state: FSMContext):
+#     url = settings.DOMAIN + f"chats/{message.from_user.id}"
+#     async with ClientSession() as session:
+#         async with session.get(url) as response:
+#             if response.status == 200:
+#                 data = response.json()
+#                 for message in data:
+#                     pass
+#                     ##TODO Развернуть бэк, посмотреть структуру ответов
+#             else:
+#                 await message.answer(f"Ошибка {response.status}")

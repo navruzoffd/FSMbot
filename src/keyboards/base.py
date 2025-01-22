@@ -1,10 +1,34 @@
 from aiogram.types import (
-    KeyboardButton,
-    ReplyKeyboardMarkup
+    InlineKeyboardMarkup,
+    InlineKeyboardButton
 )
 
 def start_keyboard():
-    keyboard = ReplyKeyboardMarkup(keyboard=[
-        [KeyboardButton(text="Создать чат"), KeyboardButton(text="Добавить сообщение")]
-    ], resize_keyboard=True)
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Create", callback_data="create"),
+         InlineKeyboardButton(text="View", callback_data="view")],
+         [InlineKeyboardButton(text="Delete", callback_data="delete"),
+          InlineKeyboardButton(text="Back", callback_data="start")]
+    ])
+    return keyboard
+
+def filters_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Age", callback_data="state_age")],
+        [InlineKeyboardButton(text="Market Cap", callback_data="state_marketcap")],
+        [InlineKeyboardButton(text="Ignore social networks", callback_data="state_ingnore_social")],
+        [InlineKeyboardButton(text="5M volume change", callback_data="5m_volume_change")],
+        [InlineKeyboardButton(text="Tx 1d", callback_data="tx1d")],
+        [InlineKeyboardButton(text="Tx 1h", callback_data="tx1h")],
+        [InlineKeyboardButton(text="Tx 5m", callback_data="tx5m")],
+        [InlineKeyboardButton(text="Submit", callback_data="submit_alert")],
+        [InlineKeyboardButton(text="Back", callback_data="start")],
+    ])
+    return keyboard
+
+def back_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="Back", callback_data="start")]
+    ]
+    )
     return keyboard
