@@ -94,7 +94,7 @@ async def get_alerts(callback: CallbackQuery):
                 await callback.message.answer(str(response_data))
 
 async def delete_alert(callback: CallbackQuery):
-    oid = callback.message.text.split("_")[1]
+    oid = callback.data.split("_")[1]
     async with ClientSession() as session:
         url = settings.DOMAIN + "/alert/" + oid
         async with session.delete(url=url) as response:
