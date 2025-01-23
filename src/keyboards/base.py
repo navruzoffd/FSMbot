@@ -3,12 +3,14 @@ from aiogram.types import (
     InlineKeyboardButton
 )
 
+
 def start_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Create", callback_data="create"),
          InlineKeyboardButton(text="View", callback_data="view")],
     ])
     return keyboard
+
 
 def filters_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
@@ -19,10 +21,11 @@ def filters_keyboard():
         [InlineKeyboardButton(text="Tx 1d", callback_data="tx1d")],
         [InlineKeyboardButton(text="Tx 1h", callback_data="tx1h")],
         [InlineKeyboardButton(text="Tx 5m", callback_data="tx5m")],
-        [InlineKeyboardButton(text="Submit", callback_data="submit_alert")],
-        [InlineKeyboardButton(text="Back", callback_data="start")],
+        [InlineKeyboardButton(text="Submit ⬆️", callback_data="submit_alert")],
+        [InlineKeyboardButton(text="Back⬅️", callback_data="start")],
     ])
     return keyboard
+
 
 def delete_keyboard(oid: str):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[

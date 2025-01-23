@@ -1,5 +1,5 @@
-from aiogram import Router, F
-from aiogram.filters import CommandStart, Command
+from aiogram import Router
+from aiogram.filters import CommandStart
 from src.states.base import (
     CreateAlertState
 )
@@ -31,11 +31,10 @@ from src.handlers.state import (
 
 def register_handlers(router: Router) -> None:
     router.message.register(start, CommandStart())
-    router.callback_query.register(start, lambda c: c.data =="start")
+    router.callback_query.register(start, lambda c: c.data == "start")
     router.callback_query.register(get_alerts, lambda c: c.data == "view")
     router.callback_query.register(delete_alert, lambda c: c.data.startswith("delete_"))
 
-    
     router.callback_query.register(create_alert, lambda c: c.data == "create")
     router.callback_query.register(set_age, lambda c: c.data == "state_age")
     router.callback_query.register(set_marketcap, lambda c: c.data == "state_marketcap")
@@ -45,9 +44,6 @@ def register_handlers(router: Router) -> None:
     router.callback_query.register(set_tx1h, lambda c: c.data == "tx1h")
     router.callback_query.register(set_tx5m, lambda c: c.data == "tx5m")
     router.callback_query.register(submit_alert_request, lambda c: c.data == "submit_alert")
-    # router.callback_query.register(..., lambda c: c.data == "view")
-    # router.callback_query.register(..., lambda c: c.data == "delete")
-
 
     router.message.register(state_title_and_filters, CreateAlertState.title)
     router.message.register(state_age, CreateAlertState.age_range)
@@ -57,5 +53,3 @@ def register_handlers(router: Router) -> None:
     router.message.register(state_tx1d, CreateAlertState.tx1d)
     router.message.register(state_tx1h, CreateAlertState.tx1h)
     router.message.register(state_tx5m, CreateAlertState.tx5m)
-
-    # router.message.register(state_message, MessageState.text)

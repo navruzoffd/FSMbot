@@ -11,5 +11,6 @@ class CreateAlertState(StatesGroup):
     tx1h = State()
     tx5m = State()
 
+
 class MessageState(StatesGroup):
     text = State()
